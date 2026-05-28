@@ -73,7 +73,9 @@ export default class Chapters {
       const dist = haversineKm(from, to)
       const vh = Math.round((80 + 220 * (dist / MAX_DIST)) / 5) * 5
       const el = document.querySelector(`.city-transition[data-from="${from.id}"][data-to="${to.id}"]`)
-      if (el) el.style.height = `${vh}vh`
+      if (!el) continue
+
+      el.style.height = `${vh}vh`
 
       const viewState = { lat: from.lat, lng: from.lng, altitude: from.altitude }
       gsap.to(viewState, {

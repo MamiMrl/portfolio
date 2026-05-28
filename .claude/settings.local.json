@@ -27,7 +27,10 @@
       "WebSearch",
       "WebFetch(domain:stripe.com)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(gh repo *)",
+      "WebFetch(domain:globe.gl)",
+      "Bash(curl -s http://localhost:5173)"
     ]
   }
 }

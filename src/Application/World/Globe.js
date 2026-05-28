@@ -28,10 +28,9 @@ export default class Globe {
 
     // Mardin Easter egg: faint pulsing dot always visible
     this.world.pointsData([{ lat: 37.3137, lng: 40.7349 }])
-      .pointColor(() => '#9a7bff')
+      .pointColor(() => 'rgba(154, 123, 255, 0.15)')
       .pointAltitude(() => 0.002)
       .pointRadius(() => 0.15)
-      .pointOpacity(() => 0.15)
 
     // Click handler for Mardin Easter egg
     this.world.onGlobeClick(({ lat, lng }) => {
@@ -50,15 +49,22 @@ export default class Globe {
   }
 
   showCityDot(city) {
+    const mardin = { lat: 37.3137, lng: 40.7349, mardin: true }
+    const cityPoint = { lat: city.lat, lng: city.lng, mardin: false }
     this.world
-      .pointsData([{ lat: city.lat, lng: city.lng }])
-      .pointColor(() => '#9a7bff')
-      .pointAltitude(() => 0.005)
-      .pointRadius(() => 0.3)
+      .pointsData([mardin, cityPoint])
+      .pointColor((d) => d.mardin ? 'rgba(154, 123, 255, 0.15)' : '#9a7bff')
+      .pointAltitude((d) => d.mardin ? 0.002 : 0.005)
+      .pointRadius((d) => d.mardin ? 0.15 : 0.3)
   }
 
   hideCityDot() {
-    this.world.pointsData([])
+    const mardin = { lat: 37.3137, lng: 40.7349, mardin: true }
+    this.world
+      .pointsData([mardin])
+      .pointColor(() => 'rgba(154, 123, 255, 0.15)')
+      .pointAltitude(() => 0.002)
+      .pointRadius(() => 0.15)
   }
 
   showCityRing(city) {
