@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Berke Çelik — Portfolio</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div id="globe-container"></div>
+
+    <main id="content">
+      <section class="hero-stage">
+        <div class="hero">
+          <h1 class="hero__title">Hi, I'm <span>Berke</span></h1>
+          <p class="hero__subtitle">A software engineer who has been around.</p>
+          <p class="hero__hint">Scroll.</p>
+        </div>
+      </section>
+
+      <section class="chapter" data-chapter="istanbul">
+        <div class="chapter__inner">
+          <p class="chapter__eyebrow">Where it started</p>
+          <h2 class="chapter__city">Istanbul</h2>
+          <p class="chapter__copy">B.Sc. in Computer Engineering at Kadir Has University. Foundational years in algorithms, data structures, and the web.</p>
+          <div class="chapter__photos">
+            <img class="chapter__photo" src="" alt="Istanbul">
+            <img class="chapter__photo" src="" alt="Istanbul">
+          </div>
+        </div>
+      </section>
+
+      <section class="city-transition" data-from="istanbul" data-to="ingolstadt"></section>
+      <section class="chapter" data-chapter="ingolstadt">
+        <div class="chapter__inner">
+          <p class="chapter__eyebrow">The deep dive</p>
+          <h2 class="chapter__city">Ingolstadt</h2>
+          <p class="chapter__copy">M.Sc. in Informatics at Technische Hochschule Ingolstadt. Thesis on personalized autonomous driving behavior with ML. (Concurrent: working student at SAP, Walldorf.)</p>
+          <div class="chapter__photos">
+            <img class="chapter__photo" src="" alt="Ingolstadt">
+            <img class="chapter__photo" src="" alt="Ingolstadt">
+          </div>
+        </div>
+      </section>
+
+      <section class="city-transition" data-from="ingolstadt" data-to="berlin"></section>
+      <section class="chapter" data-chapter="berlin">
+        <div class="chapter__inner">
+          <p class="chapter__eyebrow">Scale & impact</p>
+          <h2 class="chapter__city">Berlin</h2>
+          <p class="chapter__copy">Software Engineer at Tesla. Built ML models for predictive maintenance on sensor data, processing 10M+ datapoints daily. Designed KPI dashboards and QR-based maintenance alert systems.</p>
+          <div class="chapter__photos">
+            <img class="chapter__photo" src="" alt="Berlin">
+            <img class="chapter__photo" src="" alt="Berlin">
+          </div>
+        </div>
+      </section>
+
+      <section class="city-transition" data-from="berlin" data-to="wuppertal"></section>
+      <section class="chapter" data-chapter="wuppertal">
+        <div class="chapter__inner">
+          <p class="chapter__eyebrow">Full-stack</p>
+          <h2 class="chapter__city">Wuppertal</h2>
+          <p class="chapter__copy">Fullstack Developer at FairUp. Built a career fair platform with Next.js, real-time chat, serverless backend, LLM-powered CV extraction, and cross-channel notifications.</p>
+          <div class="chapter__photos">
+            <img class="chapter__photo" src="" alt="Wuppertal">
+            <img class="chapter__photo" src="" alt="Wuppertal">
+          </div>
+        </div>
+      </section>
+
+      <section class="city-transition" data-from="wuppertal" data-to="bonn"></section>
+      <section class="chapter" data-chapter="bonn">
+        <div class="chapter__inner">
+          <p class="chapter__eyebrow">Home base</p>
+          <h2 class="chapter__city">Bonn</h2>
+          <p class="chapter__copy">Current home. Building in public, contributing to the open-source ecosystem, and exploring the intersection of AI and product engineering.</p>
+          <div class="chapter__photos">
+            <img class="chapter__photo" src="" alt="Bonn">
+            <img class="chapter__photo" src="" alt="Bonn">
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter chapter--end">
+        <p class="chapter__eyebrow">Curious? Let's talk.</p>
+      </section>
+    </main>
+
+    <!-- Mardin Easter Egg Overlay -->
+    <div class="mardin-overlay">
+      <button class="mardin-overlay__close" aria-label="Close Mardin overlay">Close ×</button>
+      <img class="mardin-overlay__photo" src="" alt="Mardin old city">
+      <img class="mardin-overlay__photo" src="" alt="Mardin landscape">
+      <img class="mardin-overlay__photo" src="" alt="Mardin sunset">
+    </main>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

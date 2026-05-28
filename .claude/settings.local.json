@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:gsap.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"/ : %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"/main.js : %{http_code}\\\\n\" http://localhost:5173/main.js)",
+      "Bash(curl -s -o /dev/null -w \"/src/Application/Application.js : %{http_code}\\\\n\" http://localhost:5173/src/Application/Application.js)",
+      "Bash(curl -s -o /dev/null -w \"/node_modules/globe.gl : %{http_code}\\\\n\" \"http://localhost:5173/node_modules/.vite/deps/globe_gl.js?v=0\")",
+      "Bash(curl -s http://localhost:5173/main.js -o /dev/null)",
+      "Bash(curl -s http://localhost:5173/src/Application/Application.js -o /dev/null)",
+      "Bash(curl -s http://localhost:5173/src/Application/World/Globe.js -o /dev/null)",
+      "Bash(curl -s http://localhost:5173/src/Application/Scroll.js -o /dev/null)",
+      "Bash(curl -s http://localhost:5173/src/Application/Chapters.js -o /dev/null)",
+      "Bash(curl -s http://localhost:5173/main.js)",
+      "Bash(curl -s http://localhost:5173/src/Application/Application.js)",
+      "Bash(curl -s http://localhost:5173/src/Application/World/Globe.js)",
+      "Bash(curl -s -w \"\\\\n--HTTP--%{http_code}\\\\n\" http://localhost:5173/src/Application/Scroll.js)",
+      "Bash(curl -s -w \"\\\\n--HTTP--%{http_code}\\\\n\" http://localhost:5173/src/Application/Chapters.js)",
+      "WebSearch",
+      "WebFetch(domain:stripe.com)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
