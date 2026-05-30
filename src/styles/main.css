@@ -43,6 +43,12 @@ body {
 #content {
   position: relative;
   z-index: 1;
+  pointer-events: none;
+}
+
+#content button,
+.mardin-overlay {
+  pointer-events: auto;
 }
 
 section {
@@ -100,8 +106,22 @@ section {
   opacity: 0.6;
 }
 
+/* Dwell scroll: each chapter holds the camera for ~2.5 viewport-heights */
+.chapter {
+  min-height: unset;
+  height: 250vh;
+  position: relative;
+  display: block;
+  padding: 0;
+}
+
 .chapter__inner {
-  max-width: 36rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 8vw;
 }
 
 .chapter__eyebrow {
@@ -129,7 +149,12 @@ section {
 }
 
 .chapter--end {
+  height: auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  padding: 0 8vw;
 }
 
 .city-label {
@@ -153,10 +178,6 @@ section {
   position: relative;
   display: block;
   padding: 0;
-}
-
-.chapter__inner {
-  position: relative;
 }
 
 .chapter__photos {

@@ -4,12 +4,14 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 const INITIAL_VIEW = { lat: 30, lng: 0, altitude: 2.4 }
 
 const CITIES = [
-  { id: 'istanbul',   label: 'Istanbul',   lat: 41.0082, lng: 28.9784, altitude: 1.2 },
-  { id: 'ingolstadt', label: 'Ingolstadt', lat: 48.7665, lng: 11.4258, altitude: 0.9 },
-  { id: 'berlin',     label: 'Berlin',     lat: 52.5200, lng: 13.4050, altitude: 1.1 },
-  { id: 'wuppertal',  label: 'Wuppertal',  lat: 51.2562, lng: 7.1508,  altitude: 0.8 },
-  { id: 'bonn',       label: 'Bonn',       lat: 50.7374, lng: 7.0982,  altitude: 0.9 },
+  { id: 'istanbul',   label: 'Istanbul',   lat: 41.0082, lng: 28.9784, altitude: 0.30 },
+  { id: 'ingolstadt', label: 'Ingolstadt', lat: 48.7665, lng: 11.4258, altitude: 0.25 },
+  { id: 'berlin',     label: 'Berlin',     lat: 52.5200, lng: 13.4050, altitude: 0.30 },
+  { id: 'wuppertal',  label: 'Wuppertal',  lat: 51.2562, lng: 7.1508,  altitude: 0.22 },
+  { id: 'bonn',       label: 'Bonn',       lat: 50.7374, lng: 7.0982,  altitude: 0.25 },
 ]
+
+const TRANSIT_ALTITUDE = 1.4
 
 function haversineKm(a, b) {
   const R = 6371
@@ -63,6 +65,14 @@ export default class Chapters {
         this.world.globe.flyTo(viewState, 0)
       },
     })
+
+    // autoRotate is incompatible with deep zoom — disable once hero is past
+    ScrollTrigger.create({
+      trigger: heroStage,
+      start: 'bottom top',
+      onEnter: () => this.world.globe.setAutoRotate(false),
+      onLeaveBack: () => this.world.globe.setAutoRotate(true),
+    })
   }
 
   #bindCityTransitions() {
@@ -77,14 +87,20 @@ export default class Chapters {
 
       el.style.height = `${vh}vh`
 
-      const viewState = { lat: from.lat, lng: from.lng, altitude: from.altitude }
-      gsap.to(viewState, {
-        lat: to.lat,
-        lng: to.lng,
-        altitude: to.altitude,
-        ease: 'power2.inOut',
+      const view = { lat: from.lat, lng: from.lng, altitude: from.altitude }
+      const tl = gsap.timeline({
         scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
-        onUpdate: () => this.world.globe.flyTo(viewState, 0),
+        onUpdate: () => this.world.globe.flyTo(view, 0),
+      })
+      tl.to(view, { altitude: TRANSIT_ALTITUDE, duration: 0.3, ease: 'power2.in' })
+        .to(view, { lat: to.lat, lng: to.lng, duration: 0.4, ease: 'power2.inOut' })
+        .to(view, { altitude: to.altitude, duration: 0.3, ease: 'power2.out' })
+
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 80%',
+        onEnter: () => this.world.globe.addArc(from, to),
+        onLeaveBack: () => this.world.globe.removeArc(from, to),
       })
     }
   }
