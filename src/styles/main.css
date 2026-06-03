@@ -1,69 +1,61 @@
+/* ── Reset & tokens ─────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --bg: #08060f;
-  --bg-deep: #050309;
-  --ink: #efe8ff;
-  --ink-mute: #9b8fc7;
-  --purple: #6c46d8;
-  --purple-glow: #9a7bff;
-  --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --bg:           #08060f;
+  --bg-deep:      #050309;
+  --ink:          #efe8ff;
+  --ink-mute:     rgba(239,232,255,0.82);
+  --purple:       #6c46d8;
+  --glow:         #9a7bff;
+  --city-color:   #9a7bff;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
+html, body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-body {
-  min-height: 100vh;
-}
-
-#globe-container {
+/* ── Globe canvas (fixed full-screen bg) ─────── */
+#globe-wrap {
   position: fixed;
   inset: 0;
   z-index: 0;
 }
+#globe-wrap canvas { display: block; }
 
-#globe-container canvas {
-  display: block;
-}
-
-#content {
-  position: relative;
+/* ── Left-side vignette so text reads clean ──── */
+#left-veil {
+  position: fixed;
+  top: 0; left: 0;
+  width: 55vw; height: 100%;
+  background: linear-gradient(to right,
+    rgba(8,6,15,0.97) 0%,
+    rgba(8,6,15,0.92) 32%,
+    rgba(8,6,15,0.70) 52%,
+    rgba(8,6,15,0.20) 72%,
+    transparent 100%);
   z-index: 1;
   pointer-events: none;
 }
 
-#content button,
-.mardin-overlay {
-  pointer-events: auto;
+/* ── Scroll content ──────────────────────────── */
+#content {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
 }
+#content a, #content button { pointer-events: auto; }
 
-section {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 0 8vw;
-}
-
+/* ── Hero ────────────────────────────────────── */
 .hero-stage {
-  min-height: unset;
   height: 350vh;
   position: relative;
-  display: block;
-  padding: 0;
 }
 
 .hero {
@@ -71,48 +63,51 @@ section {
   top: 0;
   height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   padding: 0 8vw;
+  max-width: 54vw;
 }
 
-.hero__title {
-  margin: 0;
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+.hero__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--glow);
+  margin-bottom: 1.25rem;
+  opacity: 0.75;
 }
 
-.hero__title span {
-  background: linear-gradient(120deg, var(--purple-glow), var(--purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.hero__name {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 7.5vw, 6.5rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  margin-bottom: 1.75rem;
+  color: var(--ink);
 }
 
-.hero__subtitle {
-  margin-top: 1rem;
-  font-size: clamp(1rem, 1.4vw, 1.25rem);
+.hero__sub {
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 1.15vw, 1rem);
   color: var(--ink-mute);
-  max-width: 36ch;
+  line-height: 1.7;
+  max-width: 38ch;
+  margin-bottom: 4rem;
 }
 
 .hero__hint {
-  margin-top: 4rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--ink-mute);
-  opacity: 0.6;
+  color: rgba(239,232,255,0.18);
 }
 
-/* Dwell scroll: each chapter holds the camera for ~2.5 viewport-heights */
+/* ── Chapters ────────────────────────────────── */
 .chapter {
-  min-height: unset;
   height: 250vh;
   position: relative;
-  display: block;
-  padding: 0;
 }
 
 .chapter__inner {
@@ -121,35 +116,137 @@ section {
   height: 100vh;
   display: flex;
   align-items: center;
-  padding: 0 8vw;
 }
 
-.chapter__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+.chapter__text {
+  padding-left: 8vw;
+  max-width: min(500px, 46vw);
+}
+
+/* ── Typography ──────────────────────────────── */
+.eyebrow {
+  font-size: 0.65rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--purple-glow);
-  margin: 0 0 1rem;
+  color: var(--city-color);
+  margin-bottom: 1.25rem;
+  opacity: 0.9;
 }
 
-.chapter__city {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 4rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+.city-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
 }
 
-.chapter__copy {
-  margin-top: 1.25rem;
+.copy {
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 1.05vw, 0.9375rem);
   color: var(--ink-mute);
-  line-height: 1.6;
-  font-size: 1rem;
-  max-width: 40ch;
+  line-height: 1.8;
+  max-width: 42ch;
+  margin-bottom: 2rem;
 }
 
-.chapter--end {
-  height: auto;
+/* ── Chips ───────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--city-color);
+  border: 1px solid color-mix(in srgb, var(--city-color) 30%, transparent);
+  padding: 4px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ── Transition spacers ──────────────────────── */
+.city-gap { min-height: 5px; }
+
+/* ── Erasmus interlude ───────────────────────── */
+.chapter--erasmus { height: 360vh; }
+
+.erasmus__text { max-width: min(540px, 50vw); }
+
+.erasmus__counter {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: rgba(239,232,255,0.6);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.erasmus__counter b {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--city-color);
+  font-variant-numeric: tabular-nums;
+}
+.erasmus__counter em {
+  font-style: normal;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(239,232,255,0.28);
+  text-transform: uppercase;
+}
+
+.erasmus__countries {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.erasmus__countries li {
+  position: relative;
+  padding-left: 16px;
+  color: rgba(239,232,255,0.24);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: color 0.45s ease;
+}
+.erasmus__countries li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.5em;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(154,123,255,0.18);
+  transition: background 0.45s ease, box-shadow 0.45s ease;
+}
+.erasmus__countries li.lit {
+  color: var(--ink);
+}
+.erasmus__countries li.lit::before {
+  background: var(--city-color);
+  box-shadow: 0 0 9px var(--city-color);
+}
+.erasmus__countries li.is-home {
+  color: rgba(239,232,255,0.9);
+  font-weight: 500;
+}
+.erasmus__countries li.is-home::before {
+  background: var(--city-color);
+  box-shadow: 0 0 10px var(--city-color);
+}
+
+/* ── End section ─────────────────────────────── */
+.end-stage {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -157,122 +254,119 @@ section {
   padding: 0 8vw;
 }
 
-.city-label {
+.end {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.end__title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 1rem 0 2.5rem;
+  color: var(--ink);
+}
+
+.end__links {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+}
+
+.end__links a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s;
+}
+.end__links a:hover { color: var(--ink); }
+
+/* ── Dot nav ─────────────────────────────────── */
+.dot-nav {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.dot-nav__connector {
+  width: 1px;
+  height: 16px;
+  background: rgba(108,70,216,0.2);
+}
+
+.dot-nav__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(108,70,216,0.3);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+
+.dot-nav__dot.active {
+  width: 10px;
+  height: 10px;
+  background: var(--city-color);
+  box-shadow: 0 0 12px var(--city-color), 0 0 4px var(--city-color);
+}
+
+.dot-nav__label {
+  position: absolute;
+  right: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  transition: color 0.3s;
+  pointer-events: none;
+  user-select: none;
+}
+
+.dot-nav__item:hover .dot-nav__label,
+.dot-nav__item:has(.active) .dot-nav__label {
+  color: var(--city-color);
+}
+
+/* ── Globe HTML labels ───────────────────────── */
+.globe-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #9a7bff;
-  background: rgba(8, 6, 15, 0.7);
-  padding: 0.3em 0.7em;
+  color: var(--label-color, #9a7bff);
+  background: rgba(8,6,15,0.72);
+  padding: 0.25em 0.65em;
   border-radius: 2px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  animation: labelFadeIn 0.4s 0.1s forwards;
 }
 
-.city-transition {
-  min-height: unset;
-  height: 200vh;
-  position: relative;
-  display: block;
-  padding: 0;
-}
-
-.chapter__photos {
-  position: absolute;
-  right: -12vw;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.chapter__photo {
-  width: clamp(130px, 16vw, 220px);
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  border-radius: 4px;
-  background: linear-gradient(135deg, var(--purple), var(--bg-deep));
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.chapter__photo.visible {
-  opacity: 1;
-  transform: none;
-}
-
-.chapter__photo:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-.mardin-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  background: rgba(5, 3, 9, 0.8);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-
-.mardin-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.mardin-overlay__photo {
-  width: clamp(180px, 22vw, 300px);
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  border-radius: 4px;
-  background: linear-gradient(135deg, var(--purple), var(--bg-deep));
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.mardin-overlay.active .mardin-overlay__photo:nth-child(2) {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.15s;
-}
-
-.mardin-overlay.active .mardin-overlay__photo:nth-child(3) {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.3s;
-}
-
-.mardin-overlay.active .mardin-overlay__photo:nth-child(4) {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.45s;
-}
-
-.mardin-overlay__close {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  cursor: pointer;
-  background: none;
-  border: none;
-  transition: color 0.3s ease;
-}
-
-.mardin-overlay__close:hover {
-  color: var(--purple-glow);
+@keyframes labelFadeIn {
+  to { opacity: 1; }
 }

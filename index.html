@@ -1,100 +1,200 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Berke Çelik — Portfolio</title>
-    <link rel="stylesheet" href="/src/styles/main.css" />
-  </head>
-  <body>
-    <div id="globe-container"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berke Çelik — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
 
-    <main id="content">
-      <section class="hero-stage">
-        <div class="hero">
-          <h1 class="hero__title">Hi, I'm <span>Berke</span></h1>
-          <p class="hero__subtitle">A software engineer who has been around.</p>
-          <p class="hero__hint">Scroll.</p>
-        </div>
-      </section>
+  <!-- Globe canvas (fixed behind everything) -->
+  <div id="globe-wrap"></div>
 
-      <section class="chapter" data-chapter="istanbul">
-        <div class="chapter__inner">
-          <p class="chapter__eyebrow">Where it started</p>
-          <h2 class="chapter__city">Istanbul</h2>
-          <p class="chapter__copy">B.Sc. in Computer Engineering at Kadir Has University. Foundational years in algorithms, data structures, and the web.</p>
-          <div class="chapter__photos">
-            <img class="chapter__photo" src="" alt="Istanbul">
-            <img class="chapter__photo" src="" alt="Istanbul">
+  <!-- Left veil: keeps text readable over the globe -->
+  <div id="left-veil"></div>
+
+  <!-- Dot nav (populated by Chapters.js) -->
+  <nav class="dot-nav" aria-label="Journey navigation"></nav>
+
+  <!-- Scroll content -->
+  <main id="content">
+
+    <!-- Hero -->
+    <section class="hero-stage">
+      <div class="hero">
+        <p class="hero__label">Hi, I'm</p>
+        <h1 class="hero__name">Berke</h1>
+        <p class="hero__sub">
+          A software engineer who's called five cities home —
+          and is still counting.
+        </p>
+        <p class="hero__hint">scroll ↓</p>
+      </div>
+    </section>
+
+    <!-- Istanbul -->
+    <section class="chapter" data-city="istanbul" style="--city-color:#f59e0b">
+      <div class="chapter__inner">
+        <div class="chapter__text">
+          <p class="eyebrow">Istanbul · 2018 – 2022</p>
+          <h2 class="city-name">Istanbul</h2>
+          <p class="copy">
+            Started as a kid who Googled "how to make a game."
+            Left with a CS degree, a one-way ticket to Germany,
+            and the kind of confidence you can only build in a city
+            that never lets you be average.
+          </p>
+          <div class="chips">
+            <span class="chip">B.Sc. Computer Engineering</span>
+            <span class="chip">Kadir Has University</span>
+            <span class="chip">4 years</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="city-transition" data-from="istanbul" data-to="ingolstadt"></section>
-      <section class="chapter" data-chapter="ingolstadt">
-        <div class="chapter__inner">
-          <p class="chapter__eyebrow">The deep dive</p>
-          <h2 class="chapter__city">Ingolstadt</h2>
-          <p class="chapter__copy">M.Sc. in Informatics at Technische Hochschule Ingolstadt. Thesis on personalized autonomous driving behavior with ML. (Concurrent: working student at SAP, Walldorf.)</p>
-          <div class="chapter__photos">
-            <img class="chapter__photo" src="" alt="Ingolstadt">
-            <img class="chapter__photo" src="" alt="Ingolstadt">
+    <div class="city-gap" data-from="istanbul" data-to="erasmus"></div>
+
+    <!-- Erasmus interlude -->
+    <section class="chapter chapter--erasmus" data-city="erasmus" style="--city-color:#9a7bff">
+      <div class="chapter__inner">
+        <div class="chapter__text erasmus__text">
+          <p class="eyebrow">Erasmus+ Exchange · Ljubljana</p>
+          <h2 class="city-name">Ljubljana</h2>
+          <p class="copy">
+            A full Erasmus+ scholarship gave me one year in Slovenia — and a
+            standing invitation to never stay still. Every free weekend became
+            a border crossing: night trains, fifteen-euro hostels, and
+            friendships made at 2 a.m. in cities I still can't pronounce.
+            One backpack, zero regrets.
+          </p>
+          <p class="erasmus__counter">
+            <b data-count>1</b> <span>/ 9 countries</span>
+            <em>— keep scrolling to trace the route</em>
+          </p>
+          <ul class="erasmus__countries">
+            <li data-country="slovenia" class="is-home lit">Slovenia</li>
+            <li data-country="czech">Czech Republic</li>
+            <li data-country="poland">Poland</li>
+            <li data-country="austria">Austria</li>
+            <li data-country="switzerland">Switzerland</li>
+            <li data-country="france">France</li>
+            <li data-country="spain">Spain</li>
+            <li data-country="italy">Italy</li>
+            <li data-country="monaco">Monaco</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="city-gap" data-from="erasmus" data-to="ingolstadt"></div>
+
+    <!-- Ingolstadt -->
+    <section class="chapter" data-city="ingolstadt" style="--city-color:#60a5fa">
+      <div class="chapter__inner">
+        <div class="chapter__text">
+          <p class="eyebrow">Ingolstadt · 2022 – 2024</p>
+          <h2 class="city-name">Ingolstadt</h2>
+          <p class="copy">
+            Packed everything into two suitcases. Germany was colder
+            than expected. Wrote a thesis on teaching cars to drive like
+            humans — spent three Bavarian winters figuring out who I
+            wanted to be as an engineer.
+          </p>
+          <div class="chips">
+            <span class="chip">M.Sc. Informatics</span>
+            <span class="chip">TH Ingolstadt</span>
+            <span class="chip">SAP — working student</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="city-transition" data-from="ingolstadt" data-to="berlin"></section>
-      <section class="chapter" data-chapter="berlin">
-        <div class="chapter__inner">
-          <p class="chapter__eyebrow">Scale & impact</p>
-          <h2 class="chapter__city">Berlin</h2>
-          <p class="chapter__copy">Software Engineer at Tesla. Built ML models for predictive maintenance on sensor data, processing 10M+ datapoints daily. Designed KPI dashboards and QR-based maintenance alert systems.</p>
-          <div class="chapter__photos">
-            <img class="chapter__photo" src="" alt="Berlin">
-            <img class="chapter__photo" src="" alt="Berlin">
+    <div class="city-gap" data-from="ingolstadt" data-to="berlin"></div>
+
+    <!-- Berlin -->
+    <section class="chapter" data-city="berlin" style="--city-color:#22d3ee">
+      <div class="chapter__inner">
+        <div class="chapter__text">
+          <p class="eyebrow">Berlin · 2023</p>
+          <h2 class="city-name">Berlin</h2>
+          <p class="copy">
+            Tesla. Five interview rounds. 10 million sensor datapoints
+            processed every single day. The city never slept; I barely
+            did either. Learned what "production at scale" really means.
+          </p>
+          <div class="chips">
+            <span class="chip">Software Engineer · Tesla</span>
+            <span class="chip">ML · Predictive maintenance</span>
+            <span class="chip">10M+ datapoints / day</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="city-transition" data-from="berlin" data-to="wuppertal"></section>
-      <section class="chapter" data-chapter="wuppertal">
-        <div class="chapter__inner">
-          <p class="chapter__eyebrow">Full-stack</p>
-          <h2 class="chapter__city">Wuppertal</h2>
-          <p class="chapter__copy">Fullstack Developer at FairUp. Built a career fair platform with Next.js, real-time chat, serverless backend, LLM-powered CV extraction, and cross-channel notifications.</p>
-          <div class="chapter__photos">
-            <img class="chapter__photo" src="" alt="Wuppertal">
-            <img class="chapter__photo" src="" alt="Wuppertal">
+    <div class="city-gap" data-from="berlin" data-to="wuppertal"></div>
+
+    <!-- Wuppertal -->
+    <section class="chapter" data-city="wuppertal" style="--city-color:#34d399">
+      <div class="chapter__inner">
+        <div class="chapter__text">
+          <p class="eyebrow">Wuppertal · 2024</p>
+          <h2 class="city-name">Wuppertal</h2>
+          <p class="copy">
+            A suspended monorail over the river. A three-person startup
+            running on Next.js and too much coffee. Built an entire
+            platform from scratch. Grew faster than the codebase did.
+          </p>
+          <div class="chips">
+            <span class="chip">Fullstack Dev · FairUp</span>
+            <span class="chip">Next.js · LLM · Realtime</span>
+            <span class="chip">Zero to production</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="city-transition" data-from="wuppertal" data-to="bonn"></section>
-      <section class="chapter" data-chapter="bonn">
-        <div class="chapter__inner">
-          <p class="chapter__eyebrow">Home base</p>
-          <h2 class="chapter__city">Bonn</h2>
-          <p class="chapter__copy">Current home. Building in public, contributing to the open-source ecosystem, and exploring the intersection of AI and product engineering.</p>
-          <div class="chapter__photos">
-            <img class="chapter__photo" src="" alt="Bonn">
-            <img class="chapter__photo" src="" alt="Bonn">
+    <div class="city-gap" data-from="wuppertal" data-to="bonn"></div>
+
+    <!-- Bonn -->
+    <section class="chapter" data-city="bonn" style="--city-color:#f472b6">
+      <div class="chapter__inner">
+        <div class="chapter__text">
+          <p class="eyebrow">Bonn · Present</p>
+          <h2 class="city-name">Bonn</h2>
+          <p class="copy">
+            Still here. Writing code by the Rhine, building in the open,
+            and quietly working on what comes next. Open to something
+            great.
+          </p>
+          <div class="chips">
+            <span class="chip">Currently in Bonn</span>
+            <span class="chip">Open to new roles</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="chapter chapter--end">
-        <p class="chapter__eyebrow">Curious? Let's talk.</p>
-      </section>
-    </main>
+    <!-- End -->
+    <section class="end-stage">
+      <div class="end">
+        <p class="eyebrow" style="--city-color:#9a7bff">
+          Five cities. One story. Not done yet.
+        </p>
+        <h2 class="end__title">Let's talk.</h2>
+        <div class="end__links">
+          <a href="mailto:hberkecelik@gmail.com">hberkecelik@gmail.com</a>
+          <a href="https://github.com/MamiMrl" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://linkedin.com/in/berkecelik" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </section>
 
-    <!-- Mardin Easter Egg Overlay -->
-    <div class="mardin-overlay">
-      <button class="mardin-overlay__close" aria-label="Close Mardin overlay">Close ×</button>
-      <img class="mardin-overlay__photo" src="" alt="Mardin old city">
-      <img class="mardin-overlay__photo" src="" alt="Mardin landscape">
-      <img class="mardin-overlay__photo" src="" alt="Mardin sunset">
-    </div>
+  </main>
 
-    <script type="module" src="/main.js"></script>
-  </body>
+  <script type="module" src="/main.js"></script>
+</body>
 </html>

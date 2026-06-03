@@ -1,20 +1,12 @@
 import * as THREE from 'three'
 import GlobeGL from 'globe.gl'
 
-const MAJOR_CITIES = [
-  { lat: 35.6762,  lng: 139.6503 },  // Tokyo
-  { lat: 40.7128,  lng: -74.0060 },  // NYC
-  { lat: 51.5074,  lng: -0.1278  },  // London
-  { lat: 6.5244,   lng: 3.3792   },  // Lagos
-  { lat: -23.5505, lng: -46.6333 },  // São Paulo
-  { lat: 19.0760,  lng: 72.8777  },  // Mumbai
-]
+const MARDIN = { lat: 37.3137, lng: 40.7349 }
+const ERASMUS_COLOR = '#9a7bff'
+const LJUBLJANA = { lat: 46.0569, lng: 14.5058, label: 'Ljubljana' }
 
 export default class Globe {
-  #mardinActive = false
-  #prevView = null
-  #decorativeRings = MAJOR_CITIES.map((c) => ({ ...c, decorative: true }))
-  #activeRings = []
+  #mardinDot = [{ lat: MARDIN.lat, lng: MARDIN.lng, mardin: true }]
   #arcMeshes = []
   #animFrameId = null
   #animStart = Date.now()
@@ -33,7 +25,6 @@ export default class Globe {
       .globeImageUrl('/textures/earth-night.jpg')
       .bumpImageUrl('/textures/earth-topology.png')
 
-    // Cap pixel ratio (Stripe + GitHub optimization: on Retina dPR=2, this cuts GPU load)
     this.world.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
 
     const controls = this.world.controls()
@@ -43,24 +34,20 @@ export default class Globe {
     controls.autoRotate = true
     controls.autoRotateSpeed = 0.25
 
-    this.world.pointOfView({ lat: 30, lng: 0, altitude: 2.4 }, 0)
+    this.world.pointOfView({ lat: 22, lng: 14, altitude: 2.5  }, 0)
 
-    // Mardin Easter egg: faint pulsing dot always visible
-    this.world.pointsData([{ lat: 37.3137, lng: 40.7349 }])
-      .pointColor(() => 'rgba(154, 123, 255, 0.15)')
+    // Init: only mardin dot, no rings, no labels
+    this.world
+      .pointsData(this.#mardinDot)
+      .pointColor(() => 'rgba(154,123,255,0.12)')
       .pointAltitude(() => 0.002)
       .pointRadius(() => 0.15)
+      .ringsData([])
+      .htmlElementsData([])
+      .arcsData([])
 
-    this.#renderRings()
-
-    // Pause WebGL render loop when tab is hidden — saves GPU + heat
     document.addEventListener('visibilitychange', () => {
       document.hidden ? this.world.pauseAnimation() : this.world.resumeAnimation()
-    })
-
-    this.world.onGlobeClick(({ lat, lng }) => {
-      const MARDIN = { lat: 37.3137, lng: 40.7349 }
-      if (Math.hypot(lat - MARDIN.lat, lng - MARDIN.lng) < 1.5) this.#enterMardin()
     })
 
     this.sizes.on('resize', () => {
@@ -68,80 +55,135 @@ export default class Globe {
     })
   }
 
-  flyTo({ lat, lng, altitude = 1.6 }, durationMs = 1500) {
-    this.world.pointOfView({ lat, lng, altitude }, durationMs)
+  flyTo(v, durationMs = 0) {
+    const { lat, lng, altitude, alt } = v
+    this.world.pointOfView({ lat, lng, altitude: altitude ?? alt ?? 1.6 }, durationMs)
   }
 
   setAutoRotate(enabled) {
     this.world.controls().autoRotate = enabled
   }
 
-  showCityDot(city) {
-    const mardin = { lat: 37.3137, lng: 40.7349, mardin: true }
+  // ── City marker: point + ring + label, all city-colored ──
+
+  showCityMarker(city) {
     this.world
-      .pointsData([mardin, { lat: city.lat, lng: city.lng, mardin: false }])
-      .pointColor((d) => d.mardin ? 'rgba(154, 123, 255, 0.15)' : '#9a7bff')
-      .pointAltitude((d) => d.mardin ? 0.002 : 0.005)
-      .pointRadius((d) => d.mardin ? 0.15 : 0.3)
+      .pointsData([
+        ...this.#mardinDot,
+        { lat: city.lat, lng: city.lng, color: city.color },
+      ])
+      .pointColor(d => d.mardin ? 'rgba(154,123,255,0.12)' : d.color)
+      .pointAltitude(d => d.mardin ? 0.002 : 0.006)
+      .pointRadius(d => d.mardin ? 0.15 : 0.35)
+      .ringsData([{ lat: city.lat, lng: city.lng }])
+      .ringColor(() => city.color + 'bb')
+      .ringMaxRadius(3)
+      .ringPropagationSpeed(1.2)
+      .ringRepeatPeriod(1100)
+      .htmlElementsData([{ lat: city.lat, lng: city.lng, label: city.label, color: city.color }])
+      .htmlElement(d => this.#makeLabel(d))
   }
 
-  hideCityDot() {
+  hideCityMarker() {
     this.world
-      .pointsData([{ lat: 37.3137, lng: 40.7349, mardin: true }])
-      .pointColor(() => 'rgba(154, 123, 255, 0.15)')
+      .pointsData(this.#mardinDot)
+      .pointColor(() => 'rgba(154,123,255,0.12)')
       .pointAltitude(() => 0.002)
       .pointRadius(() => 0.15)
+      .ringsData([])
+      .htmlElementsData([])
   }
 
-  showCityRing(city) {
-    this.#activeRings = [{ lat: city.lat, lng: city.lng, decorative: false }]
-    this.#renderRings()
-  }
+  // ── Erasmus constellation: Ljubljana home + fanning arcs ──
 
-  hideCityRing() {
-    this.#activeRings = []
-    this.#renderRings()
-  }
+  showErasmusConstellation(dests) {
+    const destPoints = dests.map(t => ({ lat: t.lat, lng: t.lng, color: ERASMUS_COLOR }))
 
-  #renderRings() {
-    const rings = [...this.#decorativeRings, ...this.#activeRings]
-    this.world.ringsData(rings)
-      .ringColor((d) => d.decorative ? 'rgba(255, 210, 130, 0.45)' : 'rgba(154, 123, 255, 0.7)')
-      .ringMaxRadius((d) => d.decorative ? 0.6 : 3)
-      .ringPropagationSpeed((d) => d.decorative ? 0.4 : 1)
-      .ringRepeatPeriod((d) => d.decorative ? 2400 : 1200)
-  }
-
-  showCityLabel(city) {
     this.world
-      .htmlElementsData([{ lat: city.lat, lng: city.lng, label: city.label }])
-      .htmlElement((d) => {
-        const el = document.createElement('div')
-        el.className = 'city-label'
-        el.textContent = d.label
-        el.style.opacity = '1'
-        return el
-      })
+      .pointsData([
+        ...this.#mardinDot,
+        { lat: LJUBLJANA.lat, lng: LJUBLJANA.lng, color: ERASMUS_COLOR, home: true },
+        ...destPoints,
+      ])
+      .pointColor(d => d.mardin ? 'rgba(154,123,255,0.12)' : d.color)
+      .pointAltitude(d => d.mardin ? 0.002 : 0.006)
+      .pointRadius(d => d.mardin ? 0.15 : (d.home ? 0.45 : 0.26))
+      .ringsData([{ lat: LJUBLJANA.lat, lng: LJUBLJANA.lng }])
+      .ringColor(() => ERASMUS_COLOR + 'bb')
+      .ringMaxRadius(3.5)
+      .ringPropagationSpeed(1.4)
+      .ringRepeatPeriod(1000)
+      .htmlElementsData([{ lat: LJUBLJANA.lat, lng: LJUBLJANA.lng, label: 'Ljubljana', color: ERASMUS_COLOR }])
+      .htmlElement(d => this.#makeLabel(d))
+
+    const arcs = dests.map((t, i) => ({
+      id: `eras-${i}`,
+      startLat: LJUBLJANA.lat, startLng: LJUBLJANA.lng,
+      endLat: t.lat, endLng: t.lng,
+      startColor: ERASMUS_COLOR, endColor: ERASMUS_COLOR,
+    }))
+    this.world
+      .arcsData(arcs)
+      .arcColor(d => [d.startColor, d.endColor])
+      .arcDashLength(0.38)
+      .arcDashGap(0.72)
+      .arcDashAnimateTime(3200)
+      .arcStroke(0.45)
   }
 
-  hideCityLabel() {
-    this.world.htmlElementsData([])
+  clearConstellation() {
+    this.world.arcsData([])
+    this.hideCityMarker()
   }
 
-  // --- Stripe-style comet arcs ---
+  // ── Custom comet-shader arcs (city-to-city trail) ─────────
+
+  addArc(from, to) {
+    const id = `${from.id ?? from.label}-${to.id ?? to.label}`
+    if (this.#arcMeshes.some(a => a.id === id)) return
+    const mesh = this.#buildArcMesh(from, to, to.color ?? '#9a7bff')
+    this.world.scene().add(mesh)
+    this.#arcMeshes.push({ id, mesh })
+    if (!this.#animFrameId) this.#startArcLoop()
+  }
+
+  removeArc(from, to) {
+    const id = `${from.id ?? from.label}-${to.id ?? to.label}`
+    const entry = this.#arcMeshes.find(a => a.id === id)
+    if (!entry) return
+    this.world.scene().remove(entry.mesh)
+    entry.mesh.geometry.dispose()
+    entry.mesh.material.dispose()
+    this.#arcMeshes = this.#arcMeshes.filter(a => a.id !== id)
+    if (this.#arcMeshes.length === 0) this.#stopArcLoop()
+  }
+
+  setAtmosphereColor(color) {
+    this.world.atmosphereColor(color)
+  }
+
+  // ── Internals ─────────────────────────────────────────────
+
+  #makeLabel(d) {
+    const el = document.createElement('div')
+    el.className = 'globe-label'
+    el.textContent = d.label
+    el.style.setProperty('--label-color', d.color)
+    return el
+  }
 
   #latLngToVec3(lat, lng) {
     const r = this.world.getGlobeRadius()
-    const phi = (90 - lat) * Math.PI / 180
+    const phi   = (90 - lat) * Math.PI / 180
     const theta = (lng + 180) * Math.PI / 180
     return new THREE.Vector3(
       -r * Math.sin(phi) * Math.cos(theta),
        r * Math.cos(phi),
-       r * Math.sin(phi) * Math.sin(theta)
+       r * Math.sin(phi) * Math.sin(theta),
     )
   }
 
-  #buildArcMesh(from, to) {
+  #buildArcMesh(from, to, color) {
     const start = this.#latLngToVec3(from.lat, from.lng)
     const end   = this.#latLngToVec3(to.lat, to.lng)
     const mid   = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5)
@@ -153,7 +195,7 @@ export default class Globe {
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         time:  { value: 0 },
-        color: { value: new THREE.Color('#9a7bff') },
+        color: { value: new THREE.Color(color) },
       },
       vertexShader: `
         varying float vProgress;
@@ -166,7 +208,6 @@ export default class Globe {
         uniform vec3 color;
         varying float vProgress;
         void main() {
-          // Comet draws from 0→1 in 2.5s, then pauses 3.5s showing ambient glow
           float period = 6.0;
           float drawTime = 2.5;
           float cycle = mod(time, period);
@@ -188,26 +229,6 @@ export default class Globe {
     return new THREE.Mesh(tubeGeo, mat)
   }
 
-  addArc(from, to) {
-    const id = `${from.id}-${to.id}`
-    if (this.#arcMeshes.some((a) => a.id === id)) return
-    const mesh = this.#buildArcMesh(from, to)
-    this.world.scene().add(mesh)
-    this.#arcMeshes.push({ id, mesh })
-    if (!this.#animFrameId) this.#startArcLoop()
-  }
-
-  removeArc(from, to) {
-    const id = `${from.id}-${to.id}`
-    const entry = this.#arcMeshes.find((a) => a.id === id)
-    if (!entry) return
-    this.world.scene().remove(entry.mesh)
-    entry.mesh.geometry.dispose()
-    entry.mesh.material.dispose()
-    this.#arcMeshes = this.#arcMeshes.filter((a) => a.id !== id)
-    if (this.#arcMeshes.length === 0) this.#stopArcLoop()
-  }
-
   #startArcLoop() {
     const tick = () => {
       const t = (Date.now() - this.#animStart) / 1000
@@ -220,23 +241,5 @@ export default class Globe {
   #stopArcLoop() {
     cancelAnimationFrame(this.#animFrameId)
     this.#animFrameId = null
-  }
-
-  // --- Mardin Easter egg ---
-
-  #enterMardin() {
-    if (this.#mardinActive) return
-    this.#mardinActive = true
-    this.#prevView = this.world.pointOfView()
-    this.world.controls().autoRotate = false
-    this.world.pointOfView({ lat: 37.3137, lng: 40.7349, altitude: 0.15 }, 1800)
-    document.querySelector('.mardin-overlay')?.classList.add('active')
-  }
-
-  exitMardin() {
-    this.#mardinActive = false
-    this.world.controls().autoRotate = true
-    this.world.pointOfView(this.#prevView ?? { lat: 30, lng: 0, altitude: 2.4 }, 1500)
-    document.querySelector('.mardin-overlay')?.classList.remove('active')
   }
 }
