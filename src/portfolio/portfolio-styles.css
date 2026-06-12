@@ -2,15 +2,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:           #08060f;
-  --bg-deep:      #050309;
-  --ink:          #efe8ff;
-  --ink-mute:     rgba(239,232,255,0.82);
-  --purple:       #6c46d8;
-  --glow:         #9a7bff;
-  --city-color:   #9a7bff;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --bg:          #08060f;
+  --bg-deep:     #050309;
+  --ink:         #efe8ff;
+  --ink-mute:    rgba(239,232,255,0.82);
+  --purple:      #6c46d8;
+  --glow:        #9a7bff;
+  --city-color:  #9a7bff;
+  --font-display:'Space Grotesk', system-ui, sans-serif;
+  --font-mono:   'JetBrains Mono', ui-monospace, monospace;
 }
 
 html, body {
@@ -80,7 +80,7 @@ html, body {
 
 .hero__name {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 7.5vw, 6.5rem);
+  font-size: calc(clamp(4rem, 7.5vw, 6.5rem) * var(--type-scale, 1));
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 0.95;
@@ -123,7 +123,6 @@ html, body {
   max-width: min(500px, 46vw);
 }
 
-/* ── Typography ──────────────────────────────── */
 .eyebrow {
   font-size: 0.65rem;
   letter-spacing: 0.25em;
@@ -150,6 +149,7 @@ html, body {
   line-height: 1.8;
   max-width: 42ch;
   margin-bottom: 2rem;
+  text-wrap: pretty;
 }
 
 /* ── Chips ───────────────────────────────────── */
@@ -160,7 +160,6 @@ html, body {
 }
 
 .chip {
-  font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.1em;
   color: var(--city-color);
@@ -260,6 +259,8 @@ html, body {
   z-index: 1;
 }
 
+.end .eyebrow { justify-content: center; }
+
 .end__title {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 7vw, 6rem);
@@ -268,13 +269,13 @@ html, body {
   line-height: 1;
   margin: 1rem 0 2.5rem;
   color: var(--ink);
+  text-wrap: balance;
 }
 
 .end__links {
   display: flex;
   gap: 2.5rem;
   justify-content: center;
-  font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   color: var(--ink-mute);
@@ -347,6 +348,7 @@ html, body {
 }
 
 .dot-nav__item:hover .dot-nav__label,
+.dot-nav__dot.active + .dot-nav__label,
 .dot-nav__item:has(.active) .dot-nav__label {
   color: var(--city-color);
 }

@@ -6,41 +6,77 @@
   <title>Berke Çelik — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/portfolio/portfolio-styles.css" />
+  <link rel="stylesheet" href="/src/portfolio/portfolio-v2.css" />
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
-  <!-- Globe canvas (fixed behind everything) -->
+  <!-- Loader -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <ul class="loader__sys" id="loader-sys">
+        <li data-sys><span>TEXTURES</span><b>OK</b></li>
+        <li data-sys><span>SHADERS</span><b>COMPILED</b></li>
+        <li data-sys><span>SCROLL</span><b>CALIBRATED</b></li>
+        <li data-sys><span>ORBIT</span><b>LOCKED</b></li>
+        <li data-sys><span>GUEST</span><b>WELCOME</b></li>
+      </ul>
+      <p class="loader__coords" id="loader-coords">00.0000° N / 00.0000° E</p>
+      <div class="loader__bar"><i id="loader-bar-fill"></i></div>
+      <p class="loader__meta"><span id="loader-pct">00</span><span class="loader__label">establishing orbit</span></p>
+    </div>
+  </div>
+
+  <!-- Corner chrome -->
+  <header class="chrome">
+    <div class="chrome__left">
+      <span class="chrome__name">Berke Çelik</span>
+      <span class="chrome__role">Software Engineer</span>
+    </div>
+    <div class="chrome__right">
+      <span class="chrome__status"><i class="chrome__pulse"></i>Open to work</span>
+      <span class="chrome__time" id="local-time">BONN, DE</span>
+    </div>
+  </header>
+  <div class="chrome__coords" id="cam-coords" aria-hidden="true">22.00° N / 14.00° E</div>
+
+  <!-- HUD frame -->
+  <div class="hud-frame" aria-hidden="true">
+    <i class="hud-corner hud-corner--tl"></i>
+    <i class="hud-corner hud-corner--tr"></i>
+    <i class="hud-corner hud-corner--bl"></i>
+    <i class="hud-corner hud-corner--br"></i>
+  </div>
+  <div class="hud-mission" id="hud-mission" aria-hidden="true">LEG 00 / 08 · 000%</div>
+
+  <!-- Globe canvas -->
   <div id="globe-wrap"></div>
 
-  <!-- Left veil: keeps text readable over the globe -->
+  <!-- Left veil -->
   <div id="left-veil"></div>
 
-  <!-- Dot nav (populated by Chapters.js) -->
+  <!-- Dot nav (populated by JS) -->
   <nav class="dot-nav" aria-label="Journey navigation"></nav>
 
   <!-- Scroll content -->
   <main id="content">
 
-    <!-- Hero -->
     <section class="hero-stage">
       <div class="hero">
-        <p class="hero__label">Hi, I'm</p>
-        <h1 class="hero__name">Berke</h1>
-        <p class="hero__sub">
-          A software engineer who's called five cities home —
-          and is still counting.
-        </p>
-        <p class="hero__hint">scroll ↓</p>
+        <div class="rl"><p class="hero__label">Hi, I'm</p></div>
+        <div class="rl"><h1 class="hero__name">Berke</h1></div>
+        <div class="rl"><p class="hero__sub">A software engineer who's called five cities home — and is still counting.</p></div>
+        <div class="rl"><p class="hero__hint">scroll ↓ <span class="hero__hint-keys">or press J</span></p></div>
       </div>
     </section>
 
-    <!-- Istanbul -->
     <section class="chapter" data-city="istanbul" style="--city-color:#f59e0b">
       <div class="chapter__inner">
         <div class="chapter__text">
-          <p class="eyebrow">Istanbul · 2018 – 2022</p>
-          <h2 class="city-name">Istanbul</h2>
+          <span class="chapter__num" aria-hidden="true">01</span>
+          <p class="eyebrow"><span class="eyebrow__idx">01</span>Istanbul · 2018 – 2022</p>
+          <h2 class="city-name" data-scramble>Istanbul</h2>
           <p class="copy">
             Started as a kid who Googled "how to make a game."
             Left with a CS degree, a one-way ticket to Germany,
@@ -58,12 +94,12 @@
 
     <div class="city-gap" data-from="istanbul" data-to="erasmus"></div>
 
-    <!-- Erasmus interlude -->
     <section class="chapter chapter--erasmus" data-city="erasmus" style="--city-color:#9a7bff">
       <div class="chapter__inner">
         <div class="chapter__text erasmus__text">
-          <p class="eyebrow">Erasmus+ Exchange · Ljubljana</p>
-          <h2 class="city-name">Ljubljana</h2>
+          <span class="chapter__num" aria-hidden="true">02</span>
+          <p class="eyebrow"><span class="eyebrow__idx">02</span>Erasmus+ Exchange · Ljubljana</p>
+          <h2 class="city-name" data-scramble>Ljubljana</h2>
           <p class="copy">
             A full Erasmus+ scholarship gave me one year in Slovenia — and a
             standing invitation to never stay still. Every free weekend became
@@ -92,12 +128,12 @@
 
     <div class="city-gap" data-from="erasmus" data-to="ingolstadt"></div>
 
-    <!-- Ingolstadt -->
     <section class="chapter" data-city="ingolstadt" style="--city-color:#60a5fa">
       <div class="chapter__inner">
         <div class="chapter__text">
-          <p class="eyebrow">Ingolstadt · 2022 – 2024</p>
-          <h2 class="city-name">Ingolstadt</h2>
+          <span class="chapter__num" aria-hidden="true">03</span>
+          <p class="eyebrow"><span class="eyebrow__idx">03</span>Ingolstadt · 2022 – 2024</p>
+          <h2 class="city-name" data-scramble>Ingolstadt</h2>
           <p class="copy">
             Packed everything into two suitcases. Germany was colder
             than expected. Wrote a thesis on teaching cars to drive like
@@ -115,17 +151,21 @@
 
     <div class="city-gap" data-from="ingolstadt" data-to="berlin"></div>
 
-    <!-- Berlin -->
     <section class="chapter" data-city="berlin" style="--city-color:#22d3ee">
       <div class="chapter__inner">
         <div class="chapter__text">
-          <p class="eyebrow">Berlin · 2023</p>
-          <h2 class="city-name">Berlin</h2>
+          <span class="chapter__num" aria-hidden="true">04</span>
+          <p class="eyebrow"><span class="eyebrow__idx">04</span>Berlin · 2023</p>
+          <h2 class="city-name" data-scramble>Berlin</h2>
           <p class="copy">
-            Tesla. Five interview rounds. 10 million sensor datapoints
-            processed every single day. The city never slept; I barely
-            did either. Learned what "production at scale" really means.
+            Tesla. Five interview rounds. The fleet never stops talking —
+            and my pipeline never stopped listening. Learned what
+            "production at scale" really means.
           </p>
+          <div class="tesla-counter" id="tesla-counter">
+            <p class="tesla-counter__num"><b id="tesla-count">0</b></p>
+            <p class="tesla-counter__label">sensor datapoints processed since you arrived on this page — at the fleet's real rate of 10M+/day</p>
+          </div>
           <div class="chips">
             <span class="chip">Software Engineer · Tesla</span>
             <span class="chip">ML · Predictive maintenance</span>
@@ -137,12 +177,12 @@
 
     <div class="city-gap" data-from="berlin" data-to="wuppertal"></div>
 
-    <!-- Wuppertal -->
     <section class="chapter" data-city="wuppertal" style="--city-color:#34d399">
       <div class="chapter__inner">
         <div class="chapter__text">
-          <p class="eyebrow">Wuppertal · 2024</p>
-          <h2 class="city-name">Wuppertal</h2>
+          <span class="chapter__num" aria-hidden="true">05</span>
+          <p class="eyebrow"><span class="eyebrow__idx">05</span>Wuppertal · 2024</p>
+          <h2 class="city-name" data-scramble>Wuppertal</h2>
           <p class="copy">
             A suspended monorail over the river. A three-person startup
             running on Next.js and too much coffee. Built an entire
@@ -159,12 +199,12 @@
 
     <div class="city-gap" data-from="wuppertal" data-to="bonn"></div>
 
-    <!-- Bonn -->
     <section class="chapter" data-city="bonn" style="--city-color:#f472b6">
       <div class="chapter__inner">
         <div class="chapter__text">
-          <p class="eyebrow">Bonn · Present</p>
-          <h2 class="city-name">Bonn</h2>
+          <span class="chapter__num" aria-hidden="true">06</span>
+          <p class="eyebrow"><span class="eyebrow__idx">06</span>Bonn · Present</p>
+          <h2 class="city-name" data-scramble>Bonn</h2>
           <p class="copy">
             Still here. Writing code by the Rhine, building in the open,
             and quietly working on what comes next. Open to something
@@ -178,6 +218,20 @@
       </div>
     </section>
 
+    <div class="city-gap" data-from="bonn" data-to="work"></div>
+
+    <!-- Selected Work act -->
+    <section class="work-intro">
+      <div class="work-intro__inner">
+        <p class="eyebrow" style="--city-color:#9a7bff"><span class="eyebrow__idx">07</span>Selected Work</p>
+        <h2 class="work-intro__title">The day jobs are under&nbsp;NDA.<br />These aren't.</h2>
+        <p class="copy">Side projects, shipped to production and running right now.</p>
+      </div>
+    </section>
+
+    <!-- Projects rendered from PROJECTS array in portfolio-v2-projects.js -->
+    <div id="work-projects"></div>
+
     <!-- End -->
     <section class="end-stage">
       <div class="end">
@@ -185,16 +239,32 @@
           Five cities. One story. Not done yet.
         </p>
         <h2 class="end__title">Let's talk.</h2>
-        <div class="end__links">
-          <a href="mailto:hberkecelik@gmail.com">hberkecelik@gmail.com</a>
-          <a href="https://github.com/MamiMrl" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://linkedin.com/in/berkecelik" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <a class="end__marquee" href="mailto:mami.maral@proton.me" aria-label="Email">
+        <div class="end__marquee-track" aria-hidden="true">
+          <span>mami.maral@proton.me&ensp;✺&ensp;mami.maral@proton.me&ensp;✺&ensp;mami.maral@proton.me&ensp;✺&ensp;</span><span>mami.maral@proton.me&ensp;✺&ensp;mami.maral@proton.me&ensp;✺&ensp;mami.maral@proton.me&ensp;✺&ensp;</span>
         </div>
+      </a>
+      <div class="end__bottom">
+        <div class="end__links">
+          <a class="magnetic" href="https://github.com/MamiMrl" target="_blank" rel="noopener">GitHub</a>
+          <a class="magnetic" href="https://www.linkedin.com/in/muhammedmaral/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <p class="end__status"><i class="chrome__pulse"></i>Open to new roles — Bonn / remote</p>
+        <p class="end__micro">Designed &amp; built from scratch. No templates. <span class="end__micro-keys">↑ ↓ / J K to travel</span></p>
       </div>
     </section>
 
   </main>
 
-  <script type="module" src="/main.js"></script>
+  <!-- Vendor libs (CDN) -->
+  <script src="https://unpkg.com/globe.gl@2.41.5/dist/globe.gl.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Portfolio scripts (served from /public/portfolio/, unbundled) -->
+  <script src="portfolio/portfolio-v2-projects.js"></script>
+  <script src="portfolio/portfolio-v2-globe.js"></script>
+  <script src="portfolio/portfolio-v2-ui.js"></script>
 </body>
 </html>

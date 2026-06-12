@@ -23,3 +23,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# One-time design brief drop, kept locally for reference
+Portfolio-website.zip
+design-brief/
