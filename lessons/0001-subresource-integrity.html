@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 1 — Subresource Integrity</title>
+  <link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="lesson-meta"><span class="lesson-number">01</span> Web Security · Portfolio Series</p>
+  <h1>Subresource Integrity</h1>
+  <p style="font-family:var(--font-ui);font-size:0.9rem;color:var(--ink-muted);margin-top:0.5rem;">
+    Lock your CDN dependencies to their exact known content — so a compromised CDN can never run code on your page.
+  </p>
+</header>
+
+
+<h2>The attack in one sentence</h2>
+
+<p>
+  Your <code>index.html</code> loads three scripts from external CDNs — globe.gl from unpkg,
+  GSAP from cdnjs. Each of those CDNs is a third party you trust unconditionally:
+  whatever they serve, <em>your visitors' browsers execute</em>.
+</p>
+
+<p>
+  A <strong>supply chain attack</strong> exploits that trust. The attacker doesn't
+  hack your repo — they compromise the CDN (or the npm package it serves). The file
+  at the same URL now contains malicious code. Every visitor to your portfolio runs it,
+  because nothing on your page checks whether the file changed.
+</p>
+
+<div class="callout warn">
+  <div class="callout-title">Real precedent</div>
+  In 2024, the <a href="https://socket.dev/blog/polyfill-io-supply-chain-attack" target="_blank" rel="noopener">polyfill.io CDN was purchased by a Chinese company and began serving malware</a> to 100,000+ websites within months. Sites with SRI hashes were automatically protected; sites without it ran the malicious code silently.
+</div>
+
+
+<h2>How SRI stops it</h2>
+
+<p>
+  Subresource Integrity adds a <strong>cryptographic fingerprint</strong> to your
+  <code>&lt;script&gt;</code> tag. The browser downloads the file, hashes it, and
+  compares the result to your fingerprint. If they don't match — even one byte
+  difference — the browser <strong>refuses to execute the script entirely</strong>.
+</p>
+
+<pre><code><span class="tok-tag">&lt;script</span>
+  <span class="tok-attr">src</span>=<span class="tok-str">"https://cdnjs.cloudflare.com/.../gsap.min.js"</span>
+  <span class="tok-attr">integrity</span>=<span class="tok-str">"sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"</span>
+  <span class="tok-attr">crossorigin</span>=<span class="tok-str">"anonymous"</span><span class="tok-tag">&gt;&lt;/script&gt;</span></code></pre>
+
+<p>
+  The <code>integrity</code> value is <code>sha384-</code> followed by a
+  base64-encoded SHA-384 hash of the file's exact bytes.
+  The <code>crossorigin="anonymous"</code> attribute is required — without it,
+  the browser won't share the hash across origins.
+</p>
+
+<div class="callout info">
+  <div class="callout-title">Why SHA-384?</div>
+  SHA-256, SHA-384, and SHA-512 are all supported. SHA-384 is the practical
+  sweet spot: longer than SHA-256 (harder to collide), shorter than SHA-512
+  (smaller HTML). MDN recommends SHA-384 as the default.
+</div>
+
+
+<h2>Generating hashes</h2>
+
+<p>Two ways to get the hash for any file:</p>
+
+<h3>Option A — Terminal (one-liner)</h3>
+<pre><code>curl -s <span class="tok-str">https://example.com/lib.js</span> \
+  | openssl dgst -sha384 -binary \
+  | openssl base64 -A</code></pre>
+<p>Pipe the output to <code>sha384-&lt;output&gt;</code> in your integrity attribute.</p>
+
+<h3>Option B — Online generator</h3>
+<p>
+  <a href="https://www.srihash.org" target="_blank" rel="noopener">srihash.org</a>
+  — paste the URL, get the full attribute string. Useful for quick checks.
+</p>
+
+<div class="callout warn">
+  <div class="callout-title">Never trust a hash you didn't compute yourself</div>
+  Some CDN providers display "suggested" SRI hashes on their pages. If the CDN
+  is already compromised, that hash may match the malicious file. Always compute
+  hashes from a fresh download, or verify against a second source (npm registry,
+  GitHub release).
+</div>
+
+
+<h2>Your task — apply SRI to the portfolio</h2>
+
+<p>
+  Here are the three ready-to-use <code>&lt;script&gt;</code> tags for your
+  <code>index.html</code>. The hashes were computed from a fresh download today.
+  Replace the existing unsecured tags with these:
+</p>
+
+<pre><code><span class="tok-cmt">&lt;!-- globe.gl 2.41.5 --&gt;</span>
+<span class="tok-tag">&lt;script</span>
+  <span class="tok-attr">src</span>=<span class="tok-str">"https://unpkg.com/globe.gl@2.41.5/dist/globe.gl.min.js"</span>
+  <span class="tok-attr">integrity</span>=<span class="tok-str">"sha384-r1nelv9C/mkJJ6yKy5ReigAikWpnLgtZTQkkda8oss6akerAHOC/KRtDkBtg4Z1V"</span>
+  <span class="tok-attr">crossorigin</span>=<span class="tok-str">"anonymous"</span><span class="tok-tag">&gt;&lt;/script&gt;</span>
+
+<span class="tok-cmt">&lt;!-- GSAP 3.12.5 --&gt;</span>
+<span class="tok-tag">&lt;script</span>
+  <span class="tok-attr">src</span>=<span class="tok-str">"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"</span>
+  <span class="tok-attr">integrity</span>=<span class="tok-str">"sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"</span>
+  <span class="tok-attr">crossorigin</span>=<span class="tok-str">"anonymous"</span><span class="tok-tag">&gt;&lt;/script&gt;</span>
+
+<span class="tok-cmt">&lt;!-- GSAP ScrollTrigger 3.12.5 --&gt;</span>
+<span class="tok-tag">&lt;script</span>
+  <span class="tok-attr">src</span>=<span class="tok-str">"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"</span>
+  <span class="tok-attr">integrity</span>=<span class="tok-str">"sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"</span>
+  <span class="tok-attr">crossorigin</span>=<span class="tok-str">"anonymous"</span><span class="tok-tag">&gt;&lt;/script&gt;</span></code></pre>
+
+<div class="callout success">
+  <div class="callout-title">After updating — verify in browser</div>
+  Open DevTools → Network tab → reload the page. Click each CDN script entry.
+  If you see <strong>Status: 200</strong> with no console errors about integrity,
+  SRI is working. To confirm it <em>blocks</em> bad files, temporarily change one
+  character in an integrity value — DevTools will show a red "Failed to load
+  resource: integrity check failed" error. Then revert.
+</div>
+
+
+<h2>Check your understanding</h2>
+
+<div class="quiz" id="quiz">
+  <div class="quiz-title">Retrieval practice — 3 questions</div>
+  <div id="quiz-body"></div>
+</div>
+
+
+<div class="primary-source">
+  <div class="primary-source-icon">📖</div>
+  <div>
+    <div class="primary-source-label">Primary source</div>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity" target="_blank" rel="noopener">
+      MDN: Subresource Integrity
+    </a>
+    <p>The most complete and trustworthy reference. Covers hash generation, CSP enforcement of SRI, and browser support. Read the "How browsers handle Subresource Integrity" section.</p>
+  </div>
+</div>
+
+<div class="ask-teacher">
+  <strong>Questions?</strong> Ask your teacher agent anything that's unclear —
+  why a specific hash algorithm, what happens on a cache hit, whether SRI
+  works with <code>type="module"</code>. Type your question in the Claude Code prompt.
+</div>
+
+<nav class="lesson-nav">
+  <span></span>
+  <a href="0002-content-security-policy.html">Lesson 2: Content Security Policy →</a>
+</nav>
+
+
+<script>
+const questions = [
+  {
+    q: "What HTML attribute enables SRI hash verification?",
+    options: [
+      { text: "crossorigin",  correct: false },
+      { text: "integrity",    correct: true  },
+      { text: "checksum",     correct: false },
+      { text: "verify-hash",  correct: false },
+    ],
+    feedback: {
+      correct: "Correct. The <code>integrity</code> attribute holds the hash. The <code>crossorigin</code> attribute is also required, but it's the integrity value the browser checks against.",
+      wrong:   "Not quite. The <code>integrity</code> attribute holds the hash string, e.g. <code>integrity=\"sha384-...\"</code>. The <code>crossorigin</code> attribute is also needed, but it just enables cross-origin requests.",
+    }
+  },
+  {
+    q: "A CDN serves a tampered file. You have a correct SRI hash. What does the browser do?",
+    options: [
+      { text: "Logs a console warning and runs it",  correct: false },
+      { text: "Blocks the script entirely",           correct: true  },
+      { text: "Uses the last cached clean version",   correct: false },
+      { text: "Asks the user to confirm",             correct: false },
+    ],
+    feedback: {
+      correct: "Correct. The browser refuses to execute the script at all — it fails hard. Your site may break visually, but no attacker code runs. This is the right tradeoff.",
+      wrong:   "The browser blocks execution entirely — it does not run the script, warn-and-continue, or fall back to cache. A hash mismatch is treated as a hard failure.",
+    }
+  },
+  {
+    q: "You upgrade globe.gl from 2.41.5 → 2.42.0. What must you do with your SRI hash?",
+    options: [
+      { text: "Reuse it — same library, same hash",       correct: false },
+      { text: "Recompute it — different file, new hash",  correct: true  },
+      { text: "Remove it — hashes only work on old URLs", correct: false },
+      { text: "Increment its version number by one",      correct: false },
+    ],
+    feedback: {
+      correct: "Correct. SRI hashes are fingerprints of exact file bytes. Any new version — even a patch — produces a different hash. Reuse would cause a mismatch and block the script.",
+      wrong:   "The hash is a fingerprint of the file's exact bytes. A different version is a different file, so the hash changes. You must recompute it for each version upgrade.",
+    }
+  },
+];
+
+let current = 0;
+
+function renderQuestion(i) {
+  const q = questions[i];
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = `
+    <p class="quiz-q">${i + 1} / ${questions.length} — ${q.q}</p>
+    <div class="quiz-options" id="opts-${i}">
+      ${q.options.map((o, j) => `
+        <div class="quiz-option" data-idx="${j}" onclick="answer(${i}, ${j})">
+          <span>${o.text}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="quiz-feedback" id="fb-${i}"></div>
+    <button class="quiz-next" id="next-${i}" onclick="nextQ(${i})">Next question →</button>
+  `;
+}
+
+function answer(qi, oi) {
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#opts-${qi} .quiz-option`);
+  const fb = document.getElementById(`fb-${qi}`);
+  const nxt = document.getElementById(`next-${qi}`);
+  const chosen = q.options[oi];
+
+  opts.forEach(o => o.classList.add('locked'));
+  opts[oi].classList.add(chosen.correct ? 'correct' : 'wrong');
+  if (!chosen.correct) {
+    q.options.forEach((o, j) => { if (o.correct) opts[j].classList.add('correct'); });
+  }
+
+  fb.innerHTML = chosen.correct ? q.feedback.correct : q.feedback.wrong;
+  fb.style.color = chosen.correct ? 'var(--success)' : '#dc2626';
+
+  if (qi < questions.length - 1) {
+    nxt.style.display = 'inline';
+  } else {
+    nxt.style.display = 'none';
+    const done = document.createElement('p');
+    done.style.cssText = 'font-family:var(--font-ui);font-size:0.875rem;color:var(--success);margin-top:1rem;font-weight:500;';
+    done.textContent = '✓ Quiz complete. If anything surprised you, ask your teacher.';
+    document.getElementById('quiz').appendChild(done);
+  }
+}
+
+function nextQ(i) {
+  current = i + 1;
+  renderQuestion(current);
+}
+
+renderQuestion(0);
+</script>
+
+</body>
+</html>
