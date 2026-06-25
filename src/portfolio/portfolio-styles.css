@@ -70,8 +70,8 @@ html, body {
 }
 
 .hero__label {
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--glow);
   margin-bottom: 1.25rem;
