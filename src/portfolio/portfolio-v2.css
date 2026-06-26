@@ -466,6 +466,27 @@ html.js .dot-nav { opacity: 0; }
   display: inline-block;
 }
 
+/* ════ Cursor label ═══════════════════════════ */
+
+#cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  white-space: nowrap;
+  visibility: hidden;
+  user-select: none;
+}
+
+@media not all and (any-hover: hover) {
+  #cursor-label { display: none; }
+}
+
 /* ════ Mobile ═════════════════════════════════ */
 
 @media (max-width: 768px) {

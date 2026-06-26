@@ -234,6 +234,41 @@
     if (e.key === 'k' || e.key === 'K') { e.preventDefault(); go(-1); }
   });
 
+  /* ════ 8. Cursor label ══════════════════════════════════ */
+
+  if (!isTouch && window.matchMedia('(any-hover: hover) and (pointer: fine)').matches) {
+    const label = document.getElementById('cursor-label')
+    if (label) {
+      const OX = 14, OY = 6
+      let mx = 0, my = 0
+
+      document.addEventListener('mousemove', (e) => {
+        mx = e.clientX
+        my = e.clientY
+        label.style.transform = `translate(${mx + OX}px,${my + OY}px)`
+      }, { passive: true })
+
+      function showLabel(text) {
+        label.textContent = text
+        label.style.visibility = 'visible'
+      }
+      function hideLabel() {
+        label.style.visibility = 'hidden'
+      }
+
+      const heroStage = document.querySelector('.hero-stage')
+      if (heroStage) {
+        heroStage.addEventListener('mouseenter', () => showLabel('[SCROLL]'))
+        heroStage.addEventListener('mouseleave', hideLabel)
+      }
+
+      document.querySelectorAll('.work-project').forEach(card => {
+        card.addEventListener('mouseenter', () => showLabel('[VIEW]'))
+        card.addEventListener('mouseleave', hideLabel)
+      })
+    }
+  }
+
   /* ════ 7. Console easter egg ════════════════════════════ */
 
   try {
