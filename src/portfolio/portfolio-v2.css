@@ -382,6 +382,19 @@ html.js .dot-nav { opacity: 0; }
 .terminal-card__prompt { color: var(--glow); margin-right: 0.6em; }
 .terminal-card__line--dim { color: rgba(239,232,255,0.3); }
 
+.wip-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  padding: 4vh 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(239,232,255,0.5);
+}
+
 /* ════ End section ════════════════════════════ */
 
 .end-stage {
